@@ -2,16 +2,22 @@
 
 SELECT
     i.issue_id,
-    i.repo_id AS id,
-    i.created_at as created,
-    i.closed_at as closed,
+    i.repo_id AS ID,
+    i.created_at AS created,
+    i.closed_at AS closed,
     ie.created_at AS assign_date,
-    ie.action AS assignment_action,
-    ie.cntrb_id AS assignee
+    ie.ACTION AS assignment_action,
+    ie.cntrb_id AS assignee, 
+    ie.node_id as node_id  
 FROM
-    issues i
-LEFT OUTER JOIN
-    issue_events ie
-ON
-    i.issue_id = ie.issue_id AND
-    ie.action IN ('unassigned', 'assigned')
+    (
+        augur_data.issues i
+        LEFT JOIN augur_data.issue_events ie ON (
+            (
+                ( i.issue_id = ie.issue_id ) 
+                AND (
+                    ( ie.ACTION ) :: TEXT = ANY ( ARRAY [ ( 'unassigned' :: CHARACTER VARYING ) :: TEXT, ( 'assigned' :: CHARACTER VARYING ) :: TEXT ] ) 
+                ) 
+            ) 
+        ) 
+    )

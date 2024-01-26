@@ -1,4 +1,4 @@
-/* This is the SQL query that populates the explorer_pr_assignments materialized view*/
+/* This is the SQL query that populates the explorer_pr_response materialized view*/
 
 SELECT
     pr.pull_request_id,
@@ -25,7 +25,7 @@ LEFT OUTER JOIN
             prrmr.pr_review_id = prr.pr_review_id AND
             prrmr.msg_id = m.msg_id AND
             prr.pull_request_id = pr.pull_request_id
-        UNION ALL
+        UNION
         SELECT
             prmr.pull_request_id AS pull_request_id,
             m.msg_timestamp AS msg_timestamp,
