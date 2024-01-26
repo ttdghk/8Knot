@@ -37,6 +37,7 @@ def pr_assignee_query(self, repos):
                         pa.id,
                         -- below are timestamp not timestamptz
                         pa.created,
+                        pa.node_id, 
                         pa.closed,
                         pa.assign_date,
                         pa.assignment_action,
