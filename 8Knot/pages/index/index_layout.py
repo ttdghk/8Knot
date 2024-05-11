@@ -1,4 +1,4 @@
-from dash import html, dcc
+from dash import html, dcc, Input, Output
 import dash
 import dash_bootstrap_components as dbc
 import dash_mantine_components as dmc
@@ -175,6 +175,7 @@ navbar_bottom = dbc.NavbarSimple(
     fluid=True,
 )
 
+
 search_bar = html.Div(
     [
         dbc.Stack(
@@ -217,6 +218,7 @@ search_bar = html.Div(
                     style={
                         "width": "50%",
                         "paddingRight": "10px",
+                        "paddingLeft": "100px",
                     },
                 ),
                 dbc.Button(
@@ -253,6 +255,81 @@ search_bar = html.Div(
     ]
 )
 
+app = dash.Dash(
+    external_stylesheets=[dbc.themes.BOOTSTRAP]
+)
+sidebar = html.Div(
+    [
+        html.Div(
+            [
+                # width: 3rem ensures the logo is the exact width of the
+                # collapsed sidebar (accounting for padding)
+                html.Img(src=dash.get_asset_url("8knot-logo-vertical.png"), style={"width": "3rem"}),
+                #html.H2("Sidebar"),
+            ],
+            className="sidebar-header",
+        ),
+        html.Hr(),
+        dbc.Nav(
+            [
+                dbc.NavLink("Welcome", href="/", active="exact"),
+                dbc.NavLink("Repo Overview", href="/repo_overview", active="exact"),
+                dbc.NavLink(
+                    "Contributions",
+                    href="/contributions",
+                    active="exact",
+                ),
+                dbc.DropdownMenu(
+                    [
+                        dbc.DropdownMenuItem(
+                            "Behavior",
+                            href="/contributors/behavior",
+                        ),
+                        dbc.DropdownMenuItem(
+                            "Contribution Types",
+                            href="/contributors/contribution_types",
+                        ),
+                    ],
+                    label="Contributors",
+                    nav=True,
+                ),
+                dbc.NavLink(
+                    "Affiliation",
+                    href="/affiliation",
+                    active="exact",
+                ),
+                # dbc.NavLink("CHAOSS", href="/chaoss", active="exact"),
+                dbc.DropdownMenu(
+                    [
+                        dbc.DropdownMenuItem(
+                            "Lottery Factor: Top 10 Contributors by Commit",
+                            href="/contributors/behavior",
+                        ),
+                        dbc.DropdownMenuItem(
+                            "Project Velocity",
+                            href="/contributors/contribution_types",
+                        ),
+                    ],
+                    #style={'width':'100%', 'overflow': 'hidden','white-space': 'nowrap','background-color':'#1F1F23','toggle':'True'},
+                    label="CHAOSS",
+                    nav=True,
+                ),
+                dbc.NavLink("Codebase", href="/codebase", active="exact"),
+                dbc.NavLink("Info", href="/info", active="exact"),
+            ],
+            vertical=True,
+            pills=True,
+        ),
+    ],
+    className="sidebar",
+)
+content = html.Div(id="page-content", className="content")
+
+app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
+
+
+
+
 layout = dbc.Container(
     [
         # componets to store data from queries
@@ -261,11 +338,12 @@ layout = dbc.Container(
         dcc.Store(id="job-ids", storage_type="session", data=[]),
         dcc.Store(id="user-group-loading-signal", data="", storage_type="memory"),
         dcc.Location(id="url"),
-        navbar,
+        # navbar,
         dbc.Row(
             [
                 dbc.Col(
                     [
+                        sidebar,
                         dbc.Label(
                             "Select GitHub repos or orgs:",
                             html_for="projects",
